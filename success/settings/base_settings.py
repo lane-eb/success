@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'success_api.apps.SuccessApiConfig',
 ]
 
 MIDDLEWARE = [
