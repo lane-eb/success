@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     # 3rd party apps
     'rest_framework',
     'rest_framework.authtoken',
+    'drf_yasg',
+    # success apps
     'success_api.apps.SuccessApiConfig',
 ]
 
