@@ -11,19 +11,44 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import os
+import environ
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+ROOT_DIR = environ.Path(__file__) - 3
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'c&qg2a$x3koi2!(l#g%of4e*kv=r2aq=s5+@wy1pya!#wh)=*+'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+
+ENVIRONMENT = os.environ.get('ENVIRONMENT', 'prod')
+
+# Load operating system environment variables and then prepare to use them
+env = environ.Env()
+
+READ_DOT_ENV_FILE = env.bool('DJANGO_READ_DOT_ENV_FILE', default=False)
+
+env_file = str(ROOT_DIR.path('.env'))
+
+if READ_DOT_ENV_FILE or (ENVIRONMENT == 'dev' and os.path.exists(env_file)):
+    # Operating System Environment variables have precedence over variables defined
+    # in the .env file,
+    # that is to say variables from the .env files will only be used if not defined
+    # as environment variables.
+    print('Loading : {}'.format(env_file))
+    env.read_env(env_file)
+    print('The .env file has been loaded. See base_settings.py for more information')
+else:  # pragma: no cover
+    print("We didn't load .env file. Related environment variables should be prepared first. "
+          "If they have been well prepared, please ignore this message.")
 
 ALLOWED_HOSTS = []
 
@@ -68,17 +93,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'success.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 
 # Password validation
